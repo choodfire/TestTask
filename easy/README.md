@@ -13,7 +13,7 @@
 Исправленный код в файле task2.py
 
 ### 3. HTML
-Код в файле task3.py
+Код в файле task3easy.py
 
 ### 4. IP address
 Код в файле task4.py

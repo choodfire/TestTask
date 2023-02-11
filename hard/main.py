@@ -1,6 +1,6 @@
 import json
 import os
-import psycopg2  # pip install psycopg2-binary
+import psycopg2
 import requests
 from dotenv import load_dotenv
 
