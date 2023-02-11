@@ -1,4 +1,4 @@
-# Тестовое задание для работы в GreenAtom
+# Тестовое задание для работы в GreenAtom (Часть 1)
 
 ---
 
@@ -10,16 +10,93 @@
 
 ### 2. Ошибки в коде
 Проблема в том, что в execute_handlers все лямбда выражения возвращают 5, для исправления следует добавить промежуточную переменную, которая будет получать значение шага на каждой итерации.
-Исправленный код в файле [task2.py](task2.py)
+
+```
+from typing import Callable, List
+
+
+def create_handlers(callback: Callable[[int], None]) -> List[Callable[[], None]]:
+    handlers = []
+    for step in range(5):
+        handlers.append(lambda new_step=step: callback(new_step))
+    return handlers
+
+
+def execute_handlers(handlers: List[Callable[[], None]]):
+    for handler in handlers:
+        handler()
+```
+
+Исправленный код в также в файле [task2.py](task2.py)
 
 ### 3. HTML
 
+```
+import requests  # pip install requests
+from bs4 import BeautifulSoup  # pip install beautifulsoup4
 
 
-Код в файле [task3.py](task3.py)
+def has_no_attrs(tag):
+    return not tag.attrs
+
+
+def count_html_tags():
+    hdr = {'User-Agent': 'Mozilla/5.0'}
+    response = requests.get("https://greenatom.ru/", headers=hdr)
+
+    soup = BeautifulSoup(response.text, "html.parser")
+
+    all_tags = len(soup.find_all())
+    tags_with_attributes = len(soup.find_all(has_no_attrs))
+
+    print(f'Количество всех тегов - {all_tags}')
+    print(f'Количество тегов с аттрибутами - {tags_with_attributes}')
+
+
+if __name__ == "__main__":
+    count_html_tags()`
+```
+
+Код также находится в файле [task3.py](task3.py)
 
 ### 4. IP address
-Код в файле [task4.py](task4.py)
+
+```
+import requests  # pip install requests
+
+
+def get_my_public_ip_address():
+    response = requests.get("https://ifconfig.me/")
+
+    return response.text.strip()
+
+
+if __name__ == "__main__":
+    get_my_public_ip_address()
+```
+
+Код также находится в файле [task4.py](task4.py)
 
 ### 5. Сравнение версий
-Код в файле [task5.py](task5.py)
+
+```
+def compare_versions(version_a: str, version_b: str) -> int:
+    if version_a == version_b:
+        return 0
+
+    version_a_nums = version_a.split('.')
+    version_b_nums = version_b.split('.')
+
+    for i in range(min(len(version_a_nums), len(version_b_nums))):
+        if version_a_nums[i] > version_b_nums[i]:  # Значит А новее, чем B
+            return 1
+        elif version_a_nums[i] < version_b_nums[i]:
+            return -1
+
+    if len(version_a_nums) > len(version_b_nums):  # Значит version A новее
+        return 1
+    else:
+        return -1
+```
+
+Код также находится в файле [task5.py](task5.py)
