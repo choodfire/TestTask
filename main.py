@@ -28,11 +28,6 @@ def get_data(url: str, query: str, inner_dict: str): # inner_dict - назван
 
     return data['data'][inner_dict]
 
-def insert_into_missions(cursor, missions):
-    for mission in missions:
-        cursor.execute(f"INSERT INTO mission (id, description, name) VALUES(%s, %s, %s)",
-                       (mission['id'], mission['description'], mission['name']))
-
 def insert_into_rockets(cursor, rockets):
     for rocket in rockets:
         cursor.execute("INSERT INTO rocket (id, description, name, active, company, first_flight) "
@@ -50,23 +45,15 @@ def insert_into_launches(cursor, launches):
 def main():
     url = 'https://spacex-production.up.railway.app/'
     rocket_query = """query RocketsQuery {
-      rockets {
-        id
-        name
-        description
-        active
-        company
-        first_flight
-      }
-    }"""
-    missions_query = """query MissionsQuery {
-      missions {
-        id
-        description
-        name
-        website
-      }
-    }"""
+          rockets {
+            id
+            name
+            description
+            active
+            company
+            first_flight
+          }
+        }"""
     launch_query = """query LaunchesQuery {
       launches {
         id
@@ -82,12 +69,10 @@ def main():
       }
     }"""
     rockets = get_data(url, rocket_query, 'rockets')
-    missions = get_data(url, missions_query, 'missions')
     launches = get_data(url, launch_query, 'launches')
     conn = connect_to_db()
     cursor = conn.cursor()
 
-    insert_into_missions(cursor, missions)
     insert_into_rockets(cursor, rockets)
     insert_into_launches(cursor, launches)
     conn.commit()
