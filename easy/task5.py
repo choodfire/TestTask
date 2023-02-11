@@ -15,3 +15,7 @@ def compare_versions(version_a: str, version_b: str) -> int:
         return 1
     else:
         return -1
+
+
+if __name__ == "__main__":
+    print(compare_versions('1.1', '1.21'))

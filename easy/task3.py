@@ -1,11 +1,10 @@
-# pip install beautifulsoup4
-# pip install requests
+import requests  # pip install requests
+from bs4 import BeautifulSoup  # pip install beautifulsoup4
 
-import requests
-from bs4 import BeautifulSoup
 
 def has_no_attrs(tag):
     return not tag.attrs
+
 
 def count_html_tags():
     hdr = {'User-Agent': 'Mozilla/5.0'}
@@ -19,4 +18,6 @@ def count_html_tags():
     print(f'Количество всех тегов - {all_tags}')
     print(f'Количество тегов с аттрибутами - {tags_with_attributes}')
 
-count_html_tags()
+
+if __name__ == "__main__":
+    count_html_tags()
