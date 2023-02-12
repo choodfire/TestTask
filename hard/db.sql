@@ -54,4 +54,4 @@ AS
     SELECT category, COUNT(*) as amount
     FROM publication
     where category in ('rocket', 'mission', 'launch')
-    group by category
+    group by category;
