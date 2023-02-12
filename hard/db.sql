@@ -4,7 +4,7 @@ CREATE DATABASE data;
 
 CREATE TABLE publication (
     id SERIAL PRIMARY KEY,
-
+    category VARCHAR(30),
     article_link VARCHAR(300),
     presskit VARCHAR(300),
     reddit_campaign VARCHAR(300),
@@ -48,3 +48,10 @@ CREATE TABLE launch (
     FOREIGN KEY (publication) REFERENCES publication (id),
     FOREIGN KEY (rocket_id) REFERENCES rocket (id)
 );
+
+CREATE VIEW PublicationsAmount
+AS
+    SELECT category, COUNT(*) as amount
+    FROM publication
+    where category in ('rocket', 'mission', 'launch')
+    group by category
