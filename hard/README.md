@@ -5,7 +5,7 @@
 В docker compose командой 
 ```
 volumes:
-  - ./db.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
+  - ./init.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
 ```
 создаются база данных, таблицы и представление.
 

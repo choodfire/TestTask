@@ -8,7 +8,6 @@ from dotenv import load_dotenv
 def connect_to_db():
     load_dotenv()
 
-    conn = 0
     dbname = os.getenv('DB_NAME')
     user = os.getenv('DB_USER')
     password = os.getenv('DB_PASSWORD')
@@ -19,6 +18,7 @@ def connect_to_db():
         conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
     except Exception as e:
         print(e)
+        exit(0)
 
     return conn
 
@@ -32,13 +32,17 @@ def get_data(url: str, query: str,
 
 
 def insert_into_publications(cursor, item, category: str) -> int:
-    cursor.execute("INSERT INTO publication (category, article_link, presskit, reddit_campaign, reddit_launch, "
-                   "reddit_media, reddit_recovery, wikipedia, website) "
-                   "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id",
-                   (category, item.get('article_link', None), item.get('presskit', None),
-                    item.get('reddit_campaign', None), item.get('reddit_launch', None),
-                    item.get('reddit_media', None), item.get('reddit_recovery', None),
-                    item.get('wikipedia', None), item.get('website', None)))
+    try:
+        cursor.execute("INSERT INTO publication (category, article_link, presskit, reddit_campaign, reddit_launch, "
+                       "reddit_media, reddit_recovery, wikipedia, website) "
+                       "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id",
+                       (category, item.get('article_link', None), item.get('presskit', None),
+                        item.get('reddit_campaign', None), item.get('reddit_launch', None),
+                        item.get('reddit_media', None), item.get('reddit_recovery', None),
+                        item.get('wikipedia', None), item.get('website', None)))
+    except Exception as e:
+        print(e)
+        exit(0)
 
     new_row_id = -1
 
@@ -49,32 +53,46 @@ def insert_into_publications(cursor, item, category: str) -> int:
 
     return new_row_id[0]  # id of new row
 
+
 def insert_into_missions(cursor, missions):
     for mission in missions:
         publication_id = insert_into_publications(cursor, mission, 'mission')
 
-        cursor.execute("INSERT INTO mission (id, description, name, publication) VALUES(%s, %s, %s, %s)",
-                       (mission['id'], mission['description'], mission['name'], publication_id))
+        try:
+            cursor.execute("INSERT INTO mission (id, description, name, publication) VALUES(%s, %s, %s, %s)",
+                           (mission['id'], mission['description'], mission['name'], publication_id))
+        except Exception as e:
+            print(e)
+            exit(0)
 
 
 def insert_into_rockets(cursor, rockets):
     for rocket in rockets:
         publication_id = insert_into_publications(cursor, rocket, 'rocket')
 
-        cursor.execute("INSERT INTO rocket (id, description, name, active, company, first_flight, publication) "
-                       "VALUES(%s, %s, %s, %s, %s, %s, %s)",
-                       (rocket['id'], rocket['description'], rocket['name'],
-                        rocket['active'], rocket['company'], rocket['first_flight'], str(publication_id)))
+        try:
+            cursor.execute("INSERT INTO rocket (id, description, name, active, company, first_flight, publication) "
+                           "VALUES(%s, %s, %s, %s, %s, %s, %s)",
+                           (rocket['id'], rocket['description'], rocket['name'],
+                            rocket['active'], rocket['company'], rocket['first_flight'], str(publication_id)))
+        except Exception as e:
+            print(e)
+            exit(0)
 
 
 def insert_into_launches(cursor, launches):
     for launch in launches:
         publication_id = insert_into_publications(cursor, launch['links'], 'launch')
 
-        cursor.execute("INSERT INTO launch (id, mission_id, rocket_id, upcoming, launch_success, launch_date_unix, publication)"
-                       "VALUES(%s, %s, %s, %s, %s, %s, %s)",
-                       (launch['id'], launch['mission_id'], launch['rocket']['rocket']['id'],
-                        launch['upcoming'], launch['launch_success'], launch['launch_date_utc'], publication_id))
+        try:
+            cursor.execute(
+                "INSERT INTO launch (id, mission_id, rocket_id, upcoming, launch_success, launch_date_unix, publication)"
+                "VALUES(%s, %s, %s, %s, %s, %s, %s)",
+                (launch['id'], launch['mission_id'], launch['rocket']['rocket']['id'],
+                 launch['upcoming'], launch['launch_success'], launch['launch_date_utc'], publication_id))
+        except Exception as e:
+            print(e)
+            exit(0)
 
 
 def main():
@@ -139,4 +157,5 @@ def main():
 
 
 if __name__ == "__main__":
+    print("app started")
     main()
